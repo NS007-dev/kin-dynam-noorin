@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kinematics & Dynamics | Dark Interactive Physics Site</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg0: #05060a;
+            --bg1: #070a12;
+            --card: rgba(255, 255, 255, .06);
+            --card2: rgba(255, 255, 255, .08);
+            --stroke: rgba(255, 255, 255, .11);
+            --text: #e9ecf5;
+            --muted: #aab3c5;
+
+            --neon1: #7c3aed;
+            --neon2: #22d3ee;
+            --neon3: #fb7185;
+            --good: #34d399;
+            --warn: #fbbf24;
+            --bad: #fb7185;
+            --shadow: 0 18px 70px rgba(0, 0, 0, .45);
+            --radius: 22px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial;
+            color: var(--text);
+            background:
+                radial-gradient(1200px 800px at 15% 10%, rgba(124, 58, 237, .25), transparent 60%),
+                radial-gradient(900px 700px at 85% 20%, rgba(34, 211, 238, .18), transparent 55%),
+                radial-gradient(900px 700px at 60% 95%, rgba(251, 113, 133, .10), transparent 55%),
+                linear-gradient(180deg, var(--bg0), var(--bg1));
+            overflow-x: hidden;
+        }
+
+        .glow {
+            position: fixed;
+            inset: -240px;
+            z-index: -2;
+            background: conic-gradient(from 180deg,
+                    rgba(124, 58, 237, .12),
+                    rgba(34, 211, 238, .10),
+                    rgba(251, 113, 133, .08),
+                    rgba(124, 58, 237, .12));
+            filter: blur(70px);
+            animation: drift 14s ease-in-out infinite;
+            opacity: .55;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translate(-2%, -2%) rotate(0deg) scale(1.02);
+            }
+
+            50% {
+                transform: translate(2%, 2%) rotate(25deg) scale(1.07);
+            }
+
+            100% {
+                transform: translate(-2%, -2%) rotate(0deg) scale(1.02);
+            }
+        }
+
+        .noise {
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.20'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+            opacity: .20;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .wrap {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 28px 18px 90px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 10px;
+            backdrop-filter: blur(12px);
+            background: linear-gradient(180deg, rgba(5, 6, 10, .78), rgba(5, 6, 10, .32));
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 260px;
+        }
+
+        .logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: radial-gradient(circle at 30% 30%, rgba(34, 211, 238, .9), rgba(124, 58, 237, .55), rgba(251, 113, 133, .35));
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, .12),
+                0 10px 40px rgba(124, 58, 237, .25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::after {
+            content: "";
+            position: absolute;
+            inset: -22px;
+            background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .25), transparent);
+            transform: rotate(20deg) translateX(-50%);
+            animation: shine 3.5s ease-in-out infinite;
+            opacity: .55;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: rotate(20deg) translateX(-55%);
+            }
+
+            50% {
+                transform: rotate(20deg) translateX(55%);
+            }
+
+            100% {
+                transform: rotate(20deg) translateX(-55%);
+            }
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 900;
+            letter-spacing: .2px;
+        }
+
+        .brand p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .nav a {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--muted);
+            padding: 10px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, .10);
+            background: rgba(255, 255, 255, .05);
+            transition: transform .12s ease, background .12s ease, border .12s ease, color .12s ease;
+            user-select: none;
+        }
+
+        .nav a:hover {
+            transform: translateY(-1px);
+            color: var(--text);
+        }
+
+        .nav a.active {
+            color: var(--text);
+            background: linear-gradient(180deg, rgba(34, 211, 238, .18), rgba(124, 58, 237, .16));
+            border-color: rgba(34, 211, 238, .28);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, .18);
+        }
+
+        .hero {
+            margin-top: 22px;
+            padding: 28px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(255, 255, 255, .10);
+            background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .03));
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: -140px;
+            background:
+                radial-gradient(circle at 30% 20%, rgba(34, 211, 238, .14), transparent 55%),
+                radial-gradient(circle at 75% 60%, rgba(124, 58, 237, .16), transparent 55%),
+                radial-gradient(circle at 40% 95%, rgba(251, 113, 133, .10), transparent 55%);
+            filter: blur(10px);
+            opacity: .9;
+        }
+
+        .hero>* {
+            position: relative;
+        }
+
+        .hero h2 {
+            margin: 0;
+            font-size: 34px;
+            line-height: 1.1;
+            font-weight: 900;
+        }
+
+        .hero .sub {
+            margin: 10px 0 0;
+            color: var(--muted);
+            max-width: 78ch;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .chips {
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, .10);
+            background: rgba(0, 0, 0, .20);
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, var(--neon2), var(--neon1));
+            box-shadow: 0 0 20px rgba(34, 211, 238, .35);
+        }
+
+        section {
+            scroll-margin-top: 92px;
+        }
+
+        .grid {
+            margin-top: 16px;
+            display: grid;
+            grid-template-columns: 1.15fr .85fr;
+            gap: 14px;
+        }
+
+        @media (max-width:980px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            padding: 18px;
+            border-radius: var(--radius);
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .10);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, .35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card h3 {
+            margin: 0 0 8px;
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .card p {
+            margin: 0 0 12px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.65;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, .10);
+            background: rgba(255, 255, 255, .05);
+            color: var(--muted);
+            user-select: none;
+        }
+
+        .badge b {
+            color: var(--text);
+        }
+
+        .two {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        @media (max-width:700px) {
+            .two {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .controls {
+            margin-top: 12px;
+            padding: 14px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, .10);
+            background: rgba(0, 0, 0, .20);
+        }
+
+        .control {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .control:last-child {
+            margin-bottom: 0;
+        }
+
+        .control label {
+            font-size: 12px;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .control .val {
+            color: var(--text);
+            font-weight: 900;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--neon2);
+        }
+
+        .mini {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        .btnrow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            padding: 11px 12px;
+            border-radius: 14px;
+            font-weight: 900;
+            font-size: 12px;
+            color: var(--text);
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .12);
+            transition: transform .12s ease, filter .12s ease, background .12s ease;
+            user-select: none;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.06);
+        }
+
+        .primary {
+            background: linear-gradient(180deg, rgba(34, 211, 238, .22), rgba(124, 58, 237, .20));
+            border-color: rgba(34, 211, 238, .28);
+        }
+
+        .good {
+            background: rgba(52, 211, 153, .16);
+            border-color: rgba(52, 211, 153, .24);
+        }
+
+        .danger {
+            background: rgba(251, 113, 133, .16);
+            border-color: rgba(251, 113, 133, .26);
+        }
+
+        .callout {
+            margin-top: 12px;
+            padding: 14px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, .10);
+            background: rgba(255, 255, 255, .04);
+            line-height: 1.6;
+            font-size: 13px;
+            color: #eaf0ff;
+        }
+
+        .callout b {
+            color: var(--text);
+        }
+
+        canvas {
+            width: 100%;
+            height: 220px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, .10);
+            background: rgba(0, 0, 0, .20);
+            display: block;
+        }
+
+        .formula {
+            margin-top: 10px;
+            padding: 12px 14px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, .10);
+            background: rgba(0, 0, 0, .22);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            color: #eaf0ff;
+            font-size: 12.5px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .q {
+            padding: 14px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, .10);
+            background: rgba(0, 0, 0, .20);
+            margin-top: 12px;
+        }
+
+        .q h4 {
+            margin: 0 0 8px;
+            font-size: 14px;
+        }
+
+        .opt {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin: 8px 0;
+        }
+
+        .opt input {
+            margin-top: 3px;
+        }
+
+        .result {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .footer {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, .10);
+            background: rgba(255, 255, 255, .04);
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glow"></div>
+    <div class="noise"></div>
+
+    <div class="topbar">
+        <div class="brand">
+            <div class="logo" aria-hidden="true"></div>
+            <div>
+                <h1>Kinematics & Dynamics</h1>
+                <p>SPH4U • interactive site</p>
+            </div>
+        </div>
+
+        <nav class="nav" id="nav">
+            <a href="#overview" class="active">Overview</a>
+            <a href="#kinematics">Kinematics</a>
+            <a href="#dynamics">Dynamics</a>
+            <a href="#sim">F=ma Sim</a>
+            <a href="#fbd">FBD</a>
+            <a href="#applications">Real Life</a>
+            <a href="#quiz">Quiz</a>
+        </nav>
+    </div>
+
+    <div class="wrap">
+        <header class="hero" id="overview">
+            <h2>Kinematics + Dynamics (in a way that makes sense)</h2>
+            <p class="sub">
+                <b>Kinematics</b> is basically “what is the motion doing?” (position, velocity, acceleration).
+                <b>Dynamics</b> is “why is it doing that?” (forces + Newton’s laws).
+                This website shows both, with sliders and visuals so it’s easier to understand.
+            </p>
+            <div class="chips">
+                <span class="chip"><span class="dot"></span> Forces → net force → acceleration</span>
+                <span class="chip"><span class="dot"></span> Graphs show what’s happening</span>
+                <span class="chip"><span class="dot"></span> Real-life examples</span>
+            </div>
+        </header>
+
+        <!-- KINEMATICS -->
+        <section id="kinematics">
+            <div class="grid">
+                <div class="card">
+                    <span class="badge">Unit Part • <b>Kinematics</b></span>
+                    <h3>Describing motion</h3>
+                    <p>
+                        In kinematics, we talk about how something moves. We don’t talk about forces yet.
+                        We use words and graphs like displacement, velocity, and acceleration.
+                    </p>
+
+                    <div class="two">
+                        <div>
+                            <div class="badge">Key words</div>
+                            <div class="callout">
+                                <b>Displacement (Δd):</b> change in position (where you end up vs start)<br />
+                                <b>Velocity (v):</b> how fast displacement changes (direction matters)<br />
+                                <b>Acceleration (a):</b> how fast velocity changes
+                            </div>
+                            <div class="formula">
+                                Constant acceleration (SUVAT):
+                                v = v₀ + at
+                                Δd = v₀t + ½at²
+                                v² = v₀² + 2aΔd
+                            </div>
+                        </div>
+                        <div>
+                            <div class="badge">Velocity–time graph</div>
+                            <p class="mini">Move the sliders. The line changes. The slope tells you acceleration.</p>
+                            <canvas id="vtCanvas" width="900" height="400"></canvas>
+
+                            <div class="controls">
+                                <div class="control">
+                                    <label>Start velocity v₀ (m/s) <span class="val" id="v0Val">5.0</span></label>
+                                    <input id="v0" type="range" min="-10" max="20" step="0.5" value="5">
+                                </div>
+                                <div class="control">
+                                    <label>Acceleration a (m/s²) <span class="val" id="aVal">2.0</span></label>
+                                    <input id="acc" type="range" min="-8" max="8" step="0.5" value="2">
+                                </div>
+                                <div class="control">
+                                    <label>Time shown (s) <span class="val" id="tVal">6</span></label>
+                                    <input id="tMax" type="range" min="3" max="12" step="1" value="6">
+                                </div>
+                            </div>
+
+                            <div class="callout" id="vtSummary"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="card">
+                    <span class="badge">Easy “Level 4” points</span>
+                    <h3>How to explain graphs</h3>
+                    <p>
+                        Teachers like when you say what the graph feature means (not just “it goes up”).
+                    </p>
+
+                    <div class="callout">
+                        <b>v–t slope:</b> acceleration<br />
+                        <b>area under v–t:</b> displacement<br />
+                        Straight line = constant acceleration
+                    </div>
+
+                    <div class="footer">
+                        Keep it simple: “The slope is ___ so the acceleration is ___, so the velocity is changing like
+                        ___.”
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- DYNAMICS -->
+        <section id="dynamics">
+            <div class="grid">
+                <div class="card">
+                    <span class="badge">Unit Part • <b>Dynamics</b></span>
+                    <h3>Explaining motion (the “why”)</h3>
+                    <p>
+                        Dynamics is about forces. The biggest idea is <b>net force</b>.
+                        If forces balance out, net force is zero, so acceleration is zero.
+                        If forces don’t balance, the object accelerates in the direction of the net force.
+                    </p>
+
+                    <div class="formula">
+                        Newton’s Laws (simple version):
+                        1) ΣF = 0 → constant velocity (could be 0)
+                        2) ΣF = ma → net force causes acceleration
+                        3) Forces happen in pairs (action-reaction)
+                    </div>
+
+                    <div class="callout">
+                        <b>Connection:</b> Dynamics helps you find “a” (from ΣF = ma). Then kinematics uses “a” to
+                        predict motion.
+                    </div>
+                </div>
+
+                <aside class="card">
+                    <span class="badge">Common mistakes</span>
+                    <h3>Stuff people say that’s wrong</h3>
+                    <p>This is how you sound smarter instantly.</p>
+                    <div class="callout">
+                        ❌ “Force is needed to keep something moving.”<br />
+                        ✅ You only need net force to <b>change</b> motion. Constant velocity needs ΣF = 0.<br /><br />
+                        ❌ “Bigger mass always means bigger acceleration.”<br />
+                        ✅ For the same force, bigger mass means smaller acceleration (a = F/m).
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- SIMULATION -->
+        <section id="sim">
+            <div class="grid">
+                <div class="card">
+                    <span class="badge">Interactive • <b>F = ma</b></span>
+                    <h3>Change force and mass and see what happens</h3>
+                    <p>
+                        This is a simple model: you set the net force and mass.
+                        The website calculates the acceleration and shows how the block’s velocity changes.
+                    </p>
+
+                    <div class="two">
+                        <div>
+                            <canvas id="motionCanvas" width="900" height="400"></canvas>
+                            <div class="mini">If acceleration is bigger, velocity changes faster.</div>
+                        </div>
+
+                        <div>
+                            <div class="controls">
+                                <div class="control">
+                                    <label>Net Force ΣF (N) <span class="val" id="FVal">10</span></label>
+                                    <input id="force" type="range" min="-30" max="30" step="1" value="10">
+                                </div>
+                                <div class="control">
+                                    <label>Mass m (kg) <span class="val" id="mVal">5</span></label>
+                                    <input id="mass" type="range" min="1" max="20" step="1" value="5">
+                                </div>
+                                <div class="control">
+                                    <label>Start velocity v₀ (m/s) <span class="val" id="vStartVal">0</span></label>
+                                    <input id="vStart" type="range" min="-10" max="10" step="1" value="0">
+                                </div>
+                            </div>
+
+                            <div class="callout" id="simReadout"></div>
+
+                            <div class="btnrow">
+                                <button class="primary" id="playBtn">Play</button>
+                                <button class="danger" id="resetBtn">Reset</button>
+                                <button class="good" id="slowmoBtn">Slow-mo</button>
+                            </div>
+
+                            <div class="formula" id="simFormula">
+                                a = ΣF / m
+                                v changes because a changes v over time
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="card">
+                    <span class="badge">What to notice</span>
+                    <h3>Simple patterns</h3>
+                    <p>These are the “say it out loud” takeaways.</p>
+                    <div class="callout">
+                        • More force → more acceleration<br />
+                        • More mass → less acceleration (if force stays the same)<br />
+                        • Acceleration is what changes velocity
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- FBD -->
+        <section id="fbd">
+            <div class="grid">
+                <div class="card">
+                    <span class="badge">Interactive • <b>Free-Body Diagram</b></span>
+                    <h3>Build a free-body diagram</h3>
+                    <p>
+                        A free-body diagram is just a picture of all the forces on an object.
+                        Change the sliders to see how net force changes, and what that means for acceleration.
+                    </p>
+
+                    <canvas id="fbdCanvas" width="900" height="420"></canvas>
+
+                    <div class="controls">
+                        <div class="two">
+                            <div>
+                                <div class="control">
+                                    <label>Applied force (N) <span class="val" id="apVal">20</span></label>
+                                    <input id="applied" type="range" min="0" max="60" step="1" value="20">
+                                </div>
+                                <div class="control">
+                                    <label>Friction (N) <span class="val" id="frVal">10</span></label>
+                                    <input id="friction" type="range" min="0" max="60" step="1" value="10">
+                                </div>
+                            </div>
+                            <div>
+                                <div class="control">
+                                    <label>Normal force (N) <span class="val" id="nVal">50</span></label>
+                                    <input id="normal" type="range" min="0" max="120" step="1" value="50">
+                                </div>
+                                <div class="control">
+                                    <label>Weight (N) <span class="val" id="wVal">50</span></label>
+                                    <input id="weight" type="range" min="0" max="120" step="1" value="50">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="control">
+                            <label>Mass for acceleration (kg) <span class="val" id="mfVal">5</span></label>
+                            <input id="massFBD" type="range" min="1" max="25" step="1" value="5">
+                        </div>
+                    </div>
+
+                    <div class="callout" id="fbdReadout"></div>
+                </div>
+
+                <aside class="card">
+                    <span class="badge">How to explain an FBD</span>
+                    <h3>Simple steps</h3>
+                    <div class="callout">
+                        1) Name the forces (weight, normal, friction, applied)<br />
+                        2) Decide which direction is positive<br />
+                        3) Find net force (what’s bigger?)<br />
+                        4) Use ΣF = ma to decide acceleration direction
+                    </div>
+                    <div class="footer">
+                        If ΣF = 0 → a = 0 → velocity stays the same (could be moving or stopped).
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- APPLICATIONS -->
+        <section id="applications">
+            <div class="grid">
+                <div class="card">
+                    <span class="badge">Real-life examples</span>
+                    <h3>Where this shows up</h3>
+                    <p>
+                        These are examples that connect the unit to real life (and they’re good for your culminating).
+                    </p>
+
+                    <div class="two">
+                        <div class="card" style="padding:14px; border-radius:18px;">
+                            <div class="badge">Car safety</div>
+                            <div class="callout">
+                                <b>Seatbelts:</b> Your body wants to keep moving (inertia) when the car stops.
+                                The belt is the force that changes your motion so you stop with the car.
+                            </div>
+                        </div>
+                        <div class="card" style="padding:14px; border-radius:18px;">
+                            <div class="badge">Sports (kinesiology)</div>
+                            <div class="callout">
+                                <b>Landing:</b> bending knees increases the time to stop.
+                                More time → smaller acceleration → smaller force on joints.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="two">
+                        <div class="card" style="padding:14px; border-radius:18px;">
+                            <div class="badge">Buildings</div>
+                            <div class="callout">
+                                <b>Structures:</b> engineers calculate forces so things don’t fail.
+                                If forces are too large, parts can accelerate/move in unsafe ways.
+                            </div>
+                        </div>
+                        <div class="card" style="padding:14px; border-radius:18px;">
+                            <div class="badge">Everyday feeling</div>
+                            <div class="callout">
+                                <b>“Pushed back” in a car:</b> you’re not really pushed back.
+                                Your body resists changing motion, and the seat pushes you forward.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="card">
+                    <span class="badge">Quick wrap-up</span>
+                    <h3>The unit in one sentence</h3>
+                    <div class="callout">
+                        <b>Net force causes acceleration</b>, and acceleration is what changes velocity and motion.
+                    </div>
+                    <div class="footer">
+                        If a question asks “why”, talk about forces + net force. If it asks “how much”, talk about
+                        kinematics.
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section id="quiz">
+            <div class="grid">
+                <div class="card">
+                    <span class="badge">Mini quiz</span>
+                    <h3>Quick check</h3>
+                    <p>Concept questions (no calculations needed).</p>
+
+                    <div class="q">
+                        <h4>1) If the net force is zero, what can be true?</h4>
+                        <div class="opt"><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">It must be
+                                stopped.</label></div>
+                        <div class="opt"><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">It can be
+                                stopped OR moving at constant speed (constant velocity).</label></div>
+                        <div class="opt"><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">It must be
+                                accelerating.</label></div>
+                        <div class="result" id="r1"></div>
+                    </div>
+
+                    <div class="q">
+                        <h4>2) On a velocity-time graph, what is the slope?</h4>
+                        <div class="opt"><input type="radio" name="q2" value="a" id="q2a"><label
+                                for="q2a">Displacement</label></div>
+                        <div class="opt"><input type="radio" name="q2" value="b" id="q2b"><label
+                                for="q2b">Acceleration</label></div>
+                        <div class="opt"><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">Force</label>
+                        </div>
+                        <div class="result" id="r2"></div>
+                    </div>
+
+                    <div class="q">
+                        <h4>3) Which is the best statement?</h4>
+                        <div class="opt"><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">You need a
+                                force to keep something moving.</label></div>
+                        <div class="opt"><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">You need a
+                                net force to change velocity (speed or direction).</label></div>
+                        <div class="opt"><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">More mass
+                                always means more acceleration.</label></div>
+                        <div class="result" id="r3"></div>
+                    </div>
+
+                    <div class="btnrow">
+                        <button class="primary" id="gradeBtn">Grade</button>
+                        <button class="danger" id="resetQuizBtn">Reset</button>
+                    </div>
+
+                    <div class="footer">
+                        If you can explain: “forces → net force → acceleration → change in motion”, you’re basically at
+                        Level 4.
+                    </div>
+                </div>
+
+                <aside class="card">
+                    <span class="badge">If you forget everything</span>
+                    <h3>Say this</h3>
+                    <div class="callout">
+                        <b>Step 1:</b> name the forces.<br />
+                        <b>Step 2:</b> decide if they balance (ΣF = 0) or not.<br />
+                        <b>Step 3:</b> if not, use ΣF = ma to explain acceleration direction.
+                    </div>
+                    <div class="footer">
+                        That structure alone can save you in any conceptual question.
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <div class="footer">
+            Made for SPH4U (Grade 12): simple wording + correct physics + interactive visuals.
+            You can submit this as a “topic website” alongside your talk.
+        </div>
+    </div>
+
+    <script>
+        // NAV active on scroll
+        const navLinks = Array.from(document.querySelectorAll("#nav a"));
+        const sections = navLinks.map(a => document.querySelector(a.getAttribute("href")));
+        const setActive = () => {
+            const y = window.scrollY + 120;
+            let idx = 0;
+            for (let i = 0; i < sections.length; i++) {
+                const s = sections[i];
+                if (s && s.offsetTop <= y) idx = i;
+            }
+            navLinks.forEach((a, i) => a.classList.toggle("active", i === idx));
+        };
+        window.addEventListener("scroll", setActive);
+        setActive();
+
+        // KINEMATICS v-t GRAPH
+        const vtCanvas = document.getElementById("vtCanvas");
+        const v0 = document.getElementById("v0");
+        const acc = document.getElementById("acc");
+        const tMax = document.getElementById("tMax");
+        const v0Val = document.getElementById("v0Val");
+        const aVal = document.getElementById("aVal");
+        const tVal = document.getElementById("tVal");
+        const vtSummary = document.getElementById("vtSummary");
+
+        function drawVT() {
+            const ctx = vtCanvas.getContext("2d");
+            const W = vtCanvas.width, H = vtCanvas.height;
+
+            const v0n = parseFloat(v0.value);
+            const an = parseFloat(acc.value);
+            const tN = parseFloat(tMax.value);
+
+            v0Val.textContent = v0n.toFixed(1);
+            aVal.textContent = an.toFixed(1);
+            tVal.textContent = tN.toFixed(0);
+
+            const N = 60;
+            const pts = [];
+            let vMin = Infinity, vMax = -Infinity;
+            for (let i = 0; i <= N; i++) {
+                const t = (i / N) * tN;
+                const v = v0n + an * t;
+                pts.push({ t, v });
+                vMin = Math.min(vMin, v);
+                vMax = Math.max(vMax, v);
+            }
+
+            const pad = 50;
+            const vRange = Math.max(1, vMax - vMin);
+            vMin -= 0.15 * vRange; vMax += 0.15 * vRange;
+
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = "rgba(0,0,0,.15)";
+            ctx.fillRect(0, 0, W, H);
+
+            ctx.strokeStyle = "rgba(255,255,255,.08)";
+            ctx.lineWidth = 1;
+            for (let gx = pad; gx <= W - pad; gx += (W - 2 * pad) / 6) {
+                ctx.beginPath(); ctx.moveTo(gx, pad); ctx.lineTo(gx, H - pad); ctx.stroke();
+            }
+            for (let gy = pad; gy <= H - pad; gy += (H - 2 * pad) / 5) {
+                ctx.beginPath(); ctx.moveTo(pad, gy); ctx.lineTo(W - pad, gy); ctx.stroke();
+            }
+
+            ctx.strokeStyle = "rgba(255,255,255,.25)";
+            ctx.beginPath(); ctx.moveTo(pad, H - pad); ctx.lineTo(W - pad, H - pad); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, H - pad); ctx.stroke();
+
+            ctx.fillStyle = "rgba(233,236,245,.9)";
+            ctx.font = "18px Poppins";
+            ctx.fillText("Velocity–Time Graph", pad, pad - 16);
+
+            ctx.fillStyle = "rgba(170,179,197,.9)";
+            ctx.font = "14px Poppins";
+            ctx.fillText("t (s)", W - pad - 34, H - pad + 34);
+            ctx.fillText("v (m/s)", 12, pad + 8);
+
+            function xOf(t) { return pad + (t / tN) * (W - 2 * pad); }
+            function yOf(v) { return (H - pad) - ((v - vMin) / (vMax - vMin)) * (H - 2 * pad); }
+
+            ctx.lineWidth = 3;
+            const grad = ctx.createLinearGradient(pad, pad, W - pad, H - pad);
+            grad.addColorStop(0, "rgba(34,211,238,.9)");
+            grad.addColorStop(0.5, "rgba(124,58,237,.9)");
+            grad.addColorStop(1, "rgba(251,113,133,.85)");
+            ctx.strokeStyle = grad;
+
+            ctx.beginPath();
+            pts.forEach((p, i) => {
+                const x = xOf(p.t), y = yOf(p.v);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            const vEnd = v0n + an * tN;
+            const disp = ((v0n + vEnd) / 2) * tN;
+            const motionText = (an > 0) ? "speeding up" : (an < 0) ? "slowing down (or going backward later)" : "staying the same";
+            vtSummary.innerHTML =
+                `<b>What this means:</b> The slope is <b>${an.toFixed(1)} m/s²</b>, so the acceleration is ${motionText}.<br>` +
+                `Velocity goes from <b>${v0n.toFixed(1)} m/s</b> to <b>${vEnd.toFixed(1)} m/s</b> in <b>${tN.toFixed(0)} s</b>.<br>` +
+                `The area under the line is displacement, so displacement is about <b>${disp.toFixed(1)} m</b>.`;
+        }
+        [v0, acc, tMax].forEach(el => el.addEventListener("input", drawVT));
+        drawVT();
+
+        // SIM: F=ma
+        const motionCanvas = document.getElementById("motionCanvas");
+        const force = document.getElementById("force");
+        const mass = document.getElementById("mass");
+        const vStart = document.getElementById("vStart");
+        const FVal = document.getElementById("FVal");
+        const mVal = document.getElementById("mVal");
+        const vStartVal = document.getElementById("vStartVal");
+        const simReadout = document.getElementById("simReadout");
+        const playBtn = document.getElementById("playBtn");
+        const resetBtn = document.getElementById("resetBtn");
+        const slowmoBtn = document.getElementById("slowmoBtn");
+
+        let sim = { t: 0, x: 0, v: 0, playing: false, slow: false };
+
+        function simParams() {
+            const F = parseFloat(force.value);
+            const m = parseFloat(mass.value);
+            const a = (m === 0) ? 0 : (F / m);
+            const v0s = parseFloat(vStart.value);
+            return { F, m, a, v0s };
+        }
+
+        function drawMotion() {
+            const ctx = motionCanvas.getContext("2d");
+            const W = motionCanvas.width, H = motionCanvas.height;
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = "rgba(0,0,0,.15)";
+            ctx.fillRect(0, 0, W, H);
+
+            const pad = 50;
+            ctx.strokeStyle = "rgba(255,255,255,.10)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(pad, H * 0.72);
+            ctx.lineTo(W - pad, H * 0.72);
+            ctx.stroke();
+
+            const blockW = 90, blockH = 55;
+            const trackLen = (W - 2 * pad) - blockW;
+            const xPix = pad + Math.max(0, Math.min(trackLen, sim.x));
+            const yPix = H * 0.72 - blockH;
+
+            const grad = ctx.createLinearGradient(xPix, yPix, xPix + blockW, yPix + blockH);
+            grad.addColorStop(0, "rgba(34,211,238,.30)");
+            grad.addColorStop(0.6, "rgba(124,58,237,.26)");
+            grad.addColorStop(1, "rgba(251,113,133,.22)");
+            ctx.fillStyle = grad;
+            ctx.strokeStyle = "rgba(255,255,255,.18)";
+            ctx.lineWidth = 2;
+            roundRect(ctx, xPix, yPix, blockW, blockH, 16, true, true);
+
+            const arrowLen = Math.max(0, Math.min(180, Math.abs(sim.v) * 10));
+            const dir = (sim.v >= 0) ? 1 : -1;
+            drawArrow(ctx, xPix + blockW / 2, yPix - 18, xPix + blockW / 2 + dir * arrowLen, yPix - 18,
+                "rgba(34,211,238,.85)");
+
+            ctx.fillStyle = "rgba(233,236,245,.92)";
+            ctx.font = "18px Poppins";
+            ctx.fillText("Block motion (based on ΣF = ma)", pad, pad - 10);
+
+            ctx.fillStyle = "rgba(170,179,197,.9)";
+            ctx.font = "14px Poppins";
+            ctx.fillText("Arrow shows velocity (direction + size)", pad, pad + 16);
+        }
+
+        function updateSimReadout() {
+            const { F, m, a, v0s } = simParams();
+            FVal.textContent = `${F.toFixed(0)}`;
+            mVal.textContent = `${m.toFixed(0)}`;
+            vStartVal.textContent = `${v0s.toFixed(0)}`;
+
+            simReadout.innerHTML =
+                `<b>Result:</b> a = ΣF / m = ${F.toFixed(0)} / ${m.toFixed(0)} = <b>${a.toFixed(2)} m/s²</b>.<br>` +
+                `<b>In words:</b> more net force → more acceleration. More mass → less acceleration.`;
+        }
+
+        function step() {
+            if (!sim.playing) return;
+            const { a } = simParams();
+            const dt = sim.slow ? 0.016 : 0.032;
+            sim.t += dt;
+            sim.v += a * dt;
+            sim.x += sim.v * 60 * dt;
+
+            const ctxW = motionCanvas.width;
+            const pad = 50, blockW = 90;
+            const maxX = (ctxW - 2 * pad) - blockW;
+            if (sim.x < 0) { sim.x = 0; sim.v = -sim.v * 0.3; }
+            if (sim.x > maxX) { sim.x = maxX; sim.v = -sim.v * 0.3; }
+
+            drawMotion();
+            requestAnimationFrame(step);
+        }
+
+        function resetSim() {
+            const { v0s } = simParams();
+            sim = { t: 0, x: 0, v: v0s, playing: false, slow: sim.slow };
+            drawMotion();
+            updateSimReadout();
+            playBtn.textContent = "Play";
+        }
+
+        [force, mass, vStart].forEach(el => el.addEventListener("input", () => {
+            updateSimReadout();
+            if (!sim.playing) drawMotion();
+        }));
+
+        playBtn.addEventListener("click", () => {
+            sim.playing = !sim.playing;
+            playBtn.textContent = sim.playing ? "Pause" : "Play";
+            if (sim.playing) requestAnimationFrame(step);
+        });
+        resetBtn.addEventListener("click", resetSim);
+        slowmoBtn.addEventListener("click", () => {
+            sim.slow = !sim.slow;
+            slowmoBtn.textContent = sim.slow ? "Normal speed" : "Slow-mo";
+        });
+
+        updateSimReadout();
+        resetSim();
+
+        // FBD BUILDER
+        const fbdCanvas = document.getElementById("fbdCanvas");
+        const applied = document.getElementById("applied");
+        const friction = document.getElementById("friction");
+        const normal = document.getElementById("normal");
+        const weight = document.getElementById("weight");
+        const massFBD = document.getElementById("massFBD");
+
+        const apVal = document.getElementById("apVal");
+        const frVal = document.getElementById("frVal");
+        const nVal = document.getElementById("nVal");
+        const wVal = document.getElementById("wVal");
+        const mfVal = document.getElementById("mfVal");
+        const fbdReadout = document.getElementById("fbdReadout");
+
+        function drawFBD() {
+            const ctx = fbdCanvas.getContext("2d");
+            const W = fbdCanvas.width, H = fbdCanvas.height;
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = "rgba(0,0,0,.15)";
+            ctx.fillRect(0, 0, W, H);
+
+            const Fapp = parseFloat(applied.value);
+            const Ffr = parseFloat(friction.value);
+            const Fn = parseFloat(normal.value);
+            const Fw = parseFloat(weight.value);
+            const m = parseFloat(massFBD.value);
+
+            apVal.textContent = Fapp.toFixed(0);
+            frVal.textContent = Ffr.toFixed(0);
+            nVal.textContent = Fn.toFixed(0);
+            wVal.textContent = Fw.toFixed(0);
+            mfVal.textContent = m.toFixed(0);
+
+            const cx = W / 2, cy = H / 2 + 30;
+            const boxW = 120, boxH = 80;
+
+            ctx.strokeStyle = "rgba(255,255,255,.14)";
+            ctx.lineWidth = 2;
+            const grad = ctx.createLinearGradient(cx - boxW / 2, cy - boxH / 2, cx + boxW / 2, cy + boxH / 2);
+            grad.addColorStop(0, "rgba(34,211,238,.14)");
+            grad.addColorStop(0.6, "rgba(124,58,237,.14)");
+            grad.addColorStop(1, "rgba(251,113,133,.12)");
+            ctx.fillStyle = grad;
+            roundRect(ctx, cx - boxW / 2, cy - boxH / 2, boxW, boxH, 18, true, true);
+
+            const scale = 2.2;
+            const netX = Fapp - Ffr;
+            const ax = netX / m;
+
+            ctx.fillStyle = "rgba(233,236,245,.92)";
+            ctx.font = "18px Poppins";
+            ctx.fillText("Free-Body Diagram (forces on the object)", 40, 42);
+            ctx.fillStyle = "rgba(170,179,197,.9)";
+            ctx.font = "14px Poppins";
+            ctx.fillText("If forces balance → no acceleration. If not → acceleration happens.", 40, 64);
+
+            if (Fapp > 0) drawForce(ctx, cx + boxW / 2, cy, cx + boxW / 2 + Fapp * scale, cy, "applied", "rgba(34,211,238,.85)");
+            if (Ffr > 0) drawForce(ctx, cx - boxW / 2, cy, cx - boxW / 2 - Ffr * scale, cy, "friction", "rgba(251,113,133,.80)");
+            if (Fn > 0) drawForce(ctx, cx, cy - boxH / 2, cx, cy - boxH / 2 - Fn * scale, "normal", "rgba(52,211,153,.80)");
+            if (Fw > 0) drawForce(ctx, cx, cy + boxH / 2, cx, cy + boxH / 2 + Fw * scale, "weight", "rgba(251,191,36,.80)");
+
+            const netLen = Math.min(220, Math.abs(netX) * scale);
+            const dir = netX >= 0 ? 1 : -1;
+            drawArrow(ctx, cx - dir * 10, H - 60, cx + dir * netLen, H - 60, "rgba(233,236,245,.85)");
+            ctx.fillStyle = "rgba(170,179,197,.95)";
+            ctx.font = "14px Poppins";
+            ctx.fillText("horizontal net force", 40, H - 70);
+
+            const motionDesc = (Math.abs(netX) < 0.5)
+                ? "Net force is basically zero → acceleration is basically zero → velocity stays the same."
+                : (netX > 0)
+                    ? "Net force is to the right → acceleration to the right."
+                    : "Net force is to the left → acceleration to the left.";
+
+            fbdReadout.innerHTML =
+                `<b>Net force (x):</b> ΣFₓ = ${Fapp.toFixed(0)} − ${Ffr.toFixed(0)} = <b>${netX.toFixed(0)} N</b><br>` +
+                `<b>Acceleration:</b> a = ΣFₓ / m = ${netX.toFixed(0)} / ${m.toFixed(0)} = <b>${ax.toFixed(2)} m/s²</b><br>` +
+                `<b>So:</b> ${motionDesc}`;
+        }
+
+        [applied, friction, normal, weight, massFBD].forEach(el => el.addEventListener("input", drawFBD));
+        drawFBD();
+
+        // QUIZ
+        const gradeBtn = document.getElementById("gradeBtn");
+        const resetQuizBtn = document.getElementById("resetQuizBtn");
+
+        function getRadio(name) {
+            const r = document.querySelector(`input[name="${name}"]:checked`);
+            return r ? r.value : null;
+        }
+
+        gradeBtn.addEventListener("click", () => {
+            const q1 = getRadio("q1");
+            const q2 = getRadio("q2");
+            const q3 = getRadio("q3");
+
+            const r1 = document.getElementById("r1");
+            const r2 = document.getElementById("r2");
+            const r3 = document.getElementById("r3");
+
+            r1.textContent = q1 ? (q1 === "b" ? "✅ Correct: net force 0 means acceleration 0, so it can be at rest OR constant velocity." : "❌ Not quite: net force 0 means no acceleration, not necessarily stopped.") : "Pick an option.";
+            r2.textContent = q2 ? (q2 === "b" ? "✅ Correct: slope of v–t is acceleration." : "❌ Not quite: acceleration is the slope.") : "Pick an option.";
+            r3.textContent = q3 ? (q3 === "b" ? "✅ Correct: net force is what changes velocity." : "❌ Not quite: you don’t need net force to keep moving, only to change motion.") : "Pick an option.";
+        });
+
+        resetQuizBtn.addEventListener("click", () => {
+            ["q1", "q2", "q3"].forEach(n => {
+                document.querySelectorAll(`input[name="${n}"]`).forEach(r => r.checked = false);
+            });
+            ["r1", "r2", "r3"].forEach(id => document.getElementById(id).textContent = "");
+        });
+
+        // helpers
+        function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+            const min = Math.min(w, h);
+            if (r > min / 2) r = min / 2;
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.arcTo(x + w, y, x + w, y + h, r);
+            ctx.arcTo(x + w, y + h, x, y + h, r);
+            ctx.arcTo(x, y + h, x, y, r);
+            ctx.arcTo(x, y, x + w, y, r);
+            ctx.closePath();
+            if (fill) ctx.fill();
+            if (stroke) ctx.stroke();
+        }
+
+        function drawArrow(ctx, x1, y1, x2, y2, color) {
+            const headLen = 12;
+            const dx = x2 - x1, dy = y2 - y1;
+            const ang = Math.atan2(dy, dx);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x2, y2);
+            ctx.lineTo(x2 - headLen * Math.cos(ang - Math.PI / 6), y2 - headLen * Math.sin(ang - Math.PI / 6));
+            ctx.lineTo(x2 - headLen * Math.cos(ang + Math.PI / 6), y2 - headLen * Math.sin(ang + Math.PI / 6));
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        function drawForce(ctx, x1, y1, x2, y2, label, color) {
+            drawArrow(ctx, x1, y1, x2, y2, color);
+            ctx.fillStyle = "rgba(233,236,245,.9)";
+            ctx.font = "12px Poppins";
+            const midx = (x1 + x2) / 2, midy = (y1 + y2) / 2;
+            ctx.fillText(label, midx + 8, midy - 8);
+        }
+    </script>
+</body>
+
+</html>
